@@ -39,7 +39,24 @@ async function getShowsByTerm(term) {
 
   console.log("This is showData=", showData);
 
-  return showData.data.map(show => show.show)
+ // const {id,name,summary,image} = showData[0].show;
+  //console.log(name,summary); // sweet
+
+  let result = [];
+  for(let show of showData){
+    //need to adjust for shows without image
+    if(!show.show.image){
+      var {id,name,summary, image = null} = show.show;
+    }else{
+      var {id,name,summary,image} = show.show;
+    }
+
+   show = {id,name,summary,image};
+   show.image = image ? image.medium : null;
+   result.push(show);
+  }
+  console.log('the result',result);
+  return result;
 
 
   return [
