@@ -155,8 +155,10 @@ async function getEpisodesOfShow(id) {
 
 }
 
-/** Write a clear docstring for this function... */
+/** Takes an array of episodes info; populates that into #episodesList */
 
-// function displayEpisodes(episodes) { }
+function displayEpisodes(episodes) {
+  $("#episodesList").append(episodes);
+}
 
 // add other functions that will be useful / match our structure & design
