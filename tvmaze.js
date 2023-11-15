@@ -158,6 +158,9 @@ async function getEpisodesOfShow(id) {
 /** Takes an array of episodes info; populates that into #episodesList */
 
 function displayEpisodes(episodes) {
+  for (let episode of episodes) {
+
+  }
   $("#episodesList").append(episodes);
 }
 
