@@ -1,7 +1,7 @@
 "use strict";
 
 const TVMAZE_BASE_URL = "http://api.tvmaze.com/";
-const missingImg= `https://tinyurl.com/tv-missing`;
+const missingImg = `https://tinyurl.com/tv-missing`;
 
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
@@ -22,9 +22,6 @@ async function getShowsByTerm(term) {
 
   console.log("This is searchTerm=", searchTerm);
 
-  // TODO: not right place to do that, put it in function calling this
-  // Document this behavior if you do it here
-  $searchForm.val("");
 
   const searchParam = new URLSearchParams(
     {
@@ -38,41 +35,40 @@ async function getShowsByTerm(term) {
 
   console.log("This is response=", response);
 
-  const showData = await response.json();
+  const showsData = await response.json();
 
-  console.log("This is showData=", showData);
+  console.log("This is showData=", showsData);
 
-  // TODO: find better name, ie "shows"
-  let result = [];
+  let shows = [];
 
   // TODO: example using map
-  const shows = showData.map(entries => {
-    if(!entries.show.image){
-      var {id,name,summary, image = null} = entries.show;
-    }else{
-      var {id,name,summary,image} = entries.show;
+  // const shows = showData.map(entries => {
+  //   if (!entries.show.image) {
+  //     var { id, name, summary, image = null } = entries.show;
+  //   } else {
+  //     var { id, name, summary, image } = entries.show;
+  //   }
+
+  //   entries = { id, name, summary, image };
+  //   entries.image = image ? image.medium : missingImg;
+  //   return entries;
+  // });
+
+  for (let showInfo of showsData) {
+
+    if (!showInfo.show.image) {
+      let { id, name, summary, image = null } = showInfo.show;
+      showInfo = { id, name, summary, image };
+    } else {
+      let { id, name, summary, image } = showInfo.show;
+      showInfo = { id, name, summary, image };
     }
 
-   entries = {id,name,summary,image};
-   entries.image = image ? image.medium : missingImg;
-  return entries;
-  });
-
-  // TODO: find better name than entries, not plural, singular
-  for(let entries of showData) {
-
-    if(!entries.show.image){
-      var {id,name,summary, image = null} = entries.show;
-    }else{
-      var {id,name,summary,image} = entries.show;
-    }
-
-   entries = {id,name,summary,image};
-   entries.image = image ? image.medium : missingImg;
-   result.push(entries);
+    showInfo.image = showInfo.image ? showInfo.image.medium : missingImg;
+    shows.push(showInfo);
   }
-  console.log('the result',result);
-  return result;
+  console.log('the result', shows);
+  return shows;
 
 }
 
@@ -91,8 +87,7 @@ function displayShows(shows) {
          <div class="media">
            <img
               src="${show.image}"
-              // TODO: fix alt text
-              alt="Bletchly Circle San Francisco"
+              alt="${show.name}"
               class="w-25 me-3">
            <div class="media-body">
              <h5 class="text-primary">${show.name}</h5>
@@ -122,9 +117,11 @@ async function searchShowsAndDisplay() {
   displayShows(shows);
 }
 
-$searchForm.on("submit", async function handleSearchForm (evt) {
+$searchForm.on("submit", async function handleSearchForm(evt) {
   evt.preventDefault();
-  // TODO: good place to clear form val
+
+  // TODO: not working
+  $searchForm.val("");
   await searchShowsAndDisplay();
 });
 
