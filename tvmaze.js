@@ -17,10 +17,13 @@ const $searchForm = $("#searchForm");
 
 async function getShowsByTerm(term) {
 
+  // TODO: can omit and keep it in parameter^^
   const searchTerm = term;
 
   console.log("This is searchTerm=", searchTerm);
 
+  // TODO: not right place to do that, put it in function calling this
+  // Document this behavior if you do it here
   $searchForm.val("");
 
   const searchParam = new URLSearchParams(
@@ -39,7 +42,23 @@ async function getShowsByTerm(term) {
 
   console.log("This is showData=", showData);
 
+  // TODO: find better name, ie "shows"
   let result = [];
+
+  // TODO: example using map
+  const shows = showData.map(entries => {
+    if(!entries.show.image){
+      var {id,name,summary, image = null} = entries.show;
+    }else{
+      var {id,name,summary,image} = entries.show;
+    }
+
+   entries = {id,name,summary,image};
+   entries.image = image ? image.medium : missingImg;
+  return entries;
+  });
+
+  // TODO: find better name than entries, not plural, singular
   for(let entries of showData) {
 
     if(!entries.show.image){
@@ -72,6 +91,7 @@ function displayShows(shows) {
          <div class="media">
            <img
               src="${show.image}"
+              // TODO: fix alt text
               alt="Bletchly Circle San Francisco"
               class="w-25 me-3">
            <div class="media-body">
@@ -104,6 +124,7 @@ async function searchShowsAndDisplay() {
 
 $searchForm.on("submit", async function handleSearchForm (evt) {
   evt.preventDefault();
+  // TODO: good place to clear form val
   await searchShowsAndDisplay();
 });
 
