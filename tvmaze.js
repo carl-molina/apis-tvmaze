@@ -115,6 +115,8 @@ async function searchShowsAndDisplay() {
 
   $episodesArea.hide();
   displayShows(shows);
+
+
 }
 
 $searchForm.on("submit", async function handleSearchForm(evt) {
@@ -130,7 +132,28 @@ $searchForm.on("submit", async function handleSearchForm(evt) {
  *      { id, name, season, number }
  */
 
-// async function getEpisodesOfShow(id) { }
+async function getEpisodesOfShow(id) {
+
+  const response = await fetch(
+    `${TVMAZE_BASE_URL}shows/${id}/episodes`
+  );
+
+  const showData = await response.json();
+
+  console.log(showData);
+
+
+  const episodes = showData.map(entry => {
+    let {id, name, season, number} = entry;
+    entry = {id, name, season, number};
+    return entry;
+  });
+
+  console.log("This is episodes", episodes);
+
+  return episodes;
+
+}
 
 /** Write a clear docstring for this function... */
 
