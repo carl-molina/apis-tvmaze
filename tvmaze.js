@@ -124,6 +124,10 @@ $searchForm.on("submit", async function handleSearchForm(evt) {
   await searchShowsAndDisplay(); //now we have shows
 
   $('.Show').on('click', 'button', handleShowEpisodes);
+  $('.Show button').on('click', handleShowEpisodes);
+  $('#showsList').on('click', 'button', handleShowEpisodes);
+  // TODO: can have it on top of file^^
+
 
   const $input = $("#searchForm-term");
   $input.val("");
@@ -164,12 +168,15 @@ async function getEpisodesOfShow(id) {
 
   console.log(showData);
 
+    // TODO: entry can be episode
 
-  const episodes = showData.map(entry => {
-    let { id, name, season, number } = entry;
-    entry = { id, name, season, number };
-    return entry;
-  });
+  const episodes = showData.map(({id, name, season, number}) =>
+    // TODO: const variable
+    // let { id, name, season, number } = entry;
+
+    // TODO: must have parens here
+    ({ id, name, season, number })
+  );
 
   console.log("This is episodes", episodes);
 
@@ -181,10 +188,14 @@ async function getEpisodesOfShow(id) {
 
 function displayEpisodes(episodes) {
   for (let episode of episodes) {
-    let $listItem = $(`<li>${episode.name} Season: ${episode.season},
+                      // TODO: can cleanup printout to page
+    let $listItem = $(`<li>${episode.name}, Season: ${episode.season},
                         Episode Number: ${episode.number} </li>`);
+    // TODO: can be global variable for #episodesList
     $("#episodesList").append($listItem);
   }
+
+  // TODO: jQuery .hide() and .show()
   $episodesArea.attr('style', '');
 }
 
