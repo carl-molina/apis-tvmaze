@@ -7,6 +7,8 @@ const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
 
+let shows = undefined;
+
 
 /** Given a search term, search for tv shows that match that query.
  *
@@ -81,6 +83,7 @@ async function getShowsByTerm(term) {
 function displayShows(shows) {
   $showsList.empty();
 
+  //FIXME: button id is no good for this exercise, need to look up
   for (const show of shows) {
     const $show = $(`
         <div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
@@ -92,7 +95,8 @@ function displayShows(shows) {
            <div class="media-body">
              <h5 class="text-primary">${show.name}</h5>
              <div><small>${show.summary}</small></div>
-             <button class="btn btn-outline-light btn-sm Show-getEpisodes">
+             <button class="btn btn-outline-light btn-sm Show-getEpisodes"
+              id=${show.id}>
                Episodes
              </button>
            </div>
@@ -111,21 +115,39 @@ function displayShows(shows) {
 
 async function searchShowsAndDisplay() {
   const term = $("#searchForm-term").val();
-  const shows = await getShowsByTerm(term);
+  shows = await getShowsByTerm(term);
 
   $episodesArea.hide();
   displayShows(shows);
-
-
 }
 
 $searchForm.on("submit", async function handleSearchForm(evt) {
   evt.preventDefault();
-
   // TODO: not working
   $searchForm.val("");
-  await searchShowsAndDisplay();
+  await searchShowsAndDisplay(); //now we have shows
+
+  //FIXME: needs to do something better prob as a separate function
+  $('.Show').on('click','button', handleShowEpisodes);
+
+  // get shows (array of show objects) from getShowsByTerm(term)
+  // for(let show of shows){
+  //   let episodes = getEpisodesOfShow(show.id);
+  // }
+  // FOR each episode -
+  //  need to call getEpisodesOfShow, this returns episodes
+  //  pass episodes to displayEpisodes(episodes)
 });
+
+
+async function handleShowEpisodes(evt){
+    console.log('handleShowEpisodes event target',evt.target);
+    let selectedShowId = evt.target.id;
+    console.log('handleShowEpisodes event target id',selectedShowId);
+    let episodes = await getEpisodesOfShow(selectedShowId);
+    console.log('inside handleShowEpisodes', episodes);
+    displayEpisodes(episodes);
+}
 
 
 /** Given a show ID, get from API and return (promise) array of episodes:
@@ -159,9 +181,13 @@ async function getEpisodesOfShow(id) {
 
 function displayEpisodes(episodes) {
   for (let episode of episodes) {
-
+    // create a list item
+    // display intresting things there
+    // append that li to the list
+    let $listItem = $(`<li>name: ${episode.name}</li>`);
+    $("#episodesList").append($listItem);
   }
-  $("#episodesList").append(episodes);
+  $episodesArea.attr('style','');
 }
 
 // add other functions that will be useful / match our structure & design
