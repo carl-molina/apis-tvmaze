@@ -83,7 +83,6 @@ async function getShowsByTerm(term) {
 function displayShows(shows) {
   $showsList.empty();
 
-  //FIXME: button id is no good for this exercise, need to look up
   for (const show of shows) {
     const $show = $(`
         <div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
@@ -95,8 +94,7 @@ function displayShows(shows) {
            <div class="media-body">
              <h5 class="text-primary">${show.name}</h5>
              <div><small>${show.summary}</small></div>
-             <button class="btn btn-outline-light btn-sm Show-getEpisodes"
-              id=${show.id}>
+             <button class="btn btn-outline-light btn-sm Show-getEpisodes">
                Episodes
              </button>
            </div>
@@ -123,30 +121,32 @@ async function searchShowsAndDisplay() {
 
 $searchForm.on("submit", async function handleSearchForm(evt) {
   evt.preventDefault();
-  // TODO: not working
-  $searchForm.val("");
   await searchShowsAndDisplay(); //now we have shows
 
-  //FIXME: needs to do something better prob as a separate function
-  $('.Show').on('click','button', handleShowEpisodes);
+  $('.Show').on('click', 'button', handleShowEpisodes);
 
-  // get shows (array of show objects) from getShowsByTerm(term)
-  // for(let show of shows){
-  //   let episodes = getEpisodesOfShow(show.id);
-  // }
-  // FOR each episode -
-  //  need to call getEpisodesOfShow, this returns episodes
-  //  pass episodes to displayEpisodes(episodes)
+  const $input = $("#searchForm-term");
+  $input.val("");
 });
 
 
-async function handleShowEpisodes(evt){
-    console.log('handleShowEpisodes event target',evt.target);
-    let selectedShowId = evt.target.id;
-    console.log('handleShowEpisodes event target id',selectedShowId);
-    let episodes = await getEpisodesOfShow(selectedShowId);
-    console.log('inside handleShowEpisodes', episodes);
-    displayEpisodes(episodes);
+/** Finds showID for button that's clicked for this show; passes showID to
+ *  get a list of episodes for that show; hands episode list to
+ *  displayEpisodes function.
+ */
+
+async function handleShowEpisodes(evt) {
+  console.log('handleShowEpisodes event target', evt.target);
+
+  const $selectedShowDiv = $(evt.target).closest("div[data-show-id]");
+
+  const selectedShowId = $selectedShowDiv.attr("data-show-id");
+  console.log("This is selectedShowId", selectedShowId);
+
+  console.log('handleShowEpisodes event target id', selectedShowId);
+  let episodes = await getEpisodesOfShow(selectedShowId);
+  console.log('inside handleShowEpisodes', episodes);
+  displayEpisodes(episodes);
 }
 
 
@@ -166,8 +166,8 @@ async function getEpisodesOfShow(id) {
 
 
   const episodes = showData.map(entry => {
-    let {id, name, season, number} = entry;
-    entry = {id, name, season, number};
+    let { id, name, season, number } = entry;
+    entry = { id, name, season, number };
     return entry;
   });
 
@@ -181,13 +181,11 @@ async function getEpisodesOfShow(id) {
 
 function displayEpisodes(episodes) {
   for (let episode of episodes) {
-    // create a list item
-    // display intresting things there
-    // append that li to the list
-    let $listItem = $(`<li>name: ${episode.name}</li>`);
+    let $listItem = $(`<li>${episode.name} Season: ${episode.season},
+                        Episode Number: ${episode.number} </li>`);
     $("#episodesList").append($listItem);
   }
-  $episodesArea.attr('style','');
+  $episodesArea.attr('style', '');
 }
 
 // add other functions that will be useful / match our structure & design
